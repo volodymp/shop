@@ -1,26 +1,94 @@
 <?php
 class ControllerCommonSeoPro extends Controller {
 	private $cache_data = null;
+	private $languages = array();
+	private $config_language;
 
 	public function __construct($registry) {
 		parent::__construct($registry);
 		$this->cache_data = $this->cache->get('seo_pro');
 		if (!$this->cache_data) {
-			$query = $this->db->query("SELECT LOWER(`keyword`) as 'keyword', `query` FROM " . DB_PREFIX . "url_alias ORDER BY url_alias_id");
+			$query = $this->db->query("SELECT LOWER(`keyword`) as 'keyword', `query` FROM " . DB_PREFIX . "url_alias");
 			$this->cache_data = array();
 			foreach ($query->rows as $row) {
-				if (isset($this->cache_data['keywords'][$row['keyword']])){
-					$this->cache_data['keywords'][$row['query']] = $this->cache_data['keywords'][$row['keyword']];
-					continue;
-				}
 				$this->cache_data['keywords'][$row['keyword']] = $row['query'];
 				$this->cache_data['queries'][$row['query']] = $row['keyword'];
 			}
 			$this->cache->set('seo_pro', $this->cache_data);
 		}
+
+		$query = $this->db->query("SELECT `value` FROM `" . DB_PREFIX . "setting` WHERE `key` = 'config_language'");
+		$this->config_language = $query->row['value'];
+
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "language WHERE status = '1'");
+
+		foreach ($query->rows as $result) {
+			$this->languages[$result['code']] = $result;
+		}
+
 	}
 
 	public function index() {
+
+		$code = null;
+
+		// If language specified in URI - switch to code from URI
+		if(isset($this->request->get['_route_'])) {
+			$route_ = $this->request->get['_route_'];
+			$tokens = explode('/', $this->request->get['_route_']);
+
+			if(array_key_exists($tokens[0], $this->languages)) {
+				$code = $tokens[0];
+				$this->request->get['_route_'] = substr($this->request->get['_route_'], strlen($code) + 1);
+			}
+
+			if(trim($this->request->get['_route_']) == '' || trim($this->request->get['_route_']) == 'index.php') {
+				unset($this->request->get['_route_']);
+			}
+		}
+
+		// Pavillion Theme fix for "original_route" param.
+		// Theme: <http://themeforest.net/item/pavilion-premium-responsive-opencart-theme/9219645>
+		if(isset($this->request->get['original_route'])) {
+			unset($this->request->get['original_route']);
+		}
+
+		// Detect language code
+		if(!isset($code)) {
+			if (isset($this->session->data['language'])) {
+				$code = $this->session->data['language'];
+			} elseif (isset($this->request->cookie['language'])) {
+				$code = $this->request->cookie['language'];
+			} else {
+				$code = $this->config_language;
+			}
+		}
+
+		if(!isset($this->session->data['language']) || $this->session->data['language'] != $code) {
+			$this->session->data['language'] = $code;
+		}
+
+
+		$xhttprequested =
+			isset($this->request->server['HTTP_X_REQUESTED_WITH'])
+			&& (strtolower($this->request->server['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
+
+		$captcha = isset($this->request->get['route']) && $this->request->get['route']=='tool/captcha';
+
+		if(!$xhttprequested && !$captcha) {
+			setcookie('language', $code, time() + 60 * 60 * 24 * 30, '/',
+				($this->request->server['HTTP_HOST'] != 'localhost') ? $this->request->server['HTTP_HOST'] : false);
+		}
+
+
+		$this->config->set('config_language_id', $this->languages[$code]['language_id']);
+		$this->config->set('config_language', $this->languages[$code]['code']);
+
+		$language = new Language($this->languages[$code]['directory']);
+		$language->load('default');
+		$language->load($this->languages[$code]['directory']);
+		$this->registry->set('language', $language);
+
 
 		// Add rewrite to url class
 		if ($this->config->get('config_seo_url')) {
@@ -33,7 +101,7 @@ class ControllerCommonSeoPro extends Controller {
 		if (!isset($this->request->get['_route_'])) {
 			$this->validate();
 		} else {
-			$route_ = $route = $this->request->get['_route_'];
+			$route = $this->request->get['_route_'];
 			unset($this->request->get['_route_']);
 			$parts = explode('/', trim(utf8_strtolower($route), '/'));
 			list($last_part) = explode('.', array_pop($parts));
@@ -46,12 +114,6 @@ class ControllerCommonSeoPro extends Controller {
 				}
 			}
 
-			if (isset($this->cache_data['keywords'][$route])){
-				$keyword = $route;
-				$parts = array($keyword);
-				$rows = array(array('keyword' => $keyword, 'query' => $this->cache_data['keywords'][$keyword]));
-			}
-
 			if (count($rows) == sizeof($parts)) {
 				$queries = array();
 				foreach ($rows as $row) {
@@ -60,7 +122,11 @@ class ControllerCommonSeoPro extends Controller {
 
 				reset($parts);
 				foreach ($parts as $part) {
+
+					// fix "undefined index" exception,
+					// https://github.com/myopencart/ocStore/commit/51bd518ca3ee3330ae87314472f63def17dcf746
 					if(!isset($queries[$part])) return false;
+
 					$url = explode('=', $queries[$part], 2);
 
 					if ($url[0] == 'category_id') {
@@ -89,6 +155,12 @@ class ControllerCommonSeoPro extends Controller {
 				$this->request->get['route'] = 'product/manufacturer/info';
 			} elseif (isset($this->request->get['information_id'])) {
 				$this->request->get['route'] = 'information/information';
+
+			// Compatibility with NewsPostSystem by Samdev:
+			} elseif (isset($this->request->get['news_id'])) {
+				$this->request->get['route'] = 'information/news/news';
+			} elseif (isset($this->request->get['posts_id'])) {
+				$this->request->get['route'] = 'information/posts/posts';
 			} elseif(isset($this->cache_data['queries'][$route_])) {
 					header($this->request->server['SERVER_PROTOCOL'] . ' 301 Moved Permanently');
 					$this->response->redirect($this->cache_data['queries'][$route_]);
@@ -98,6 +170,7 @@ class ControllerCommonSeoPro extends Controller {
 				}
 			}
 
+
 			$this->validate();
 
 			if (isset($this->request->get['route'])) {
@@ -106,7 +179,16 @@ class ControllerCommonSeoPro extends Controller {
 		}
 	}
 
-	public function rewrite($link) {
+	public function rewrite($link, $code = '') {
+		if(!$code) {
+			$code = $this->session->data['language'];
+		}
+		if($this->config->get('ocjazz_seopro_hide_default') && $code == $this->config_language) {
+			$code='';
+		}
+		else {
+			$code .='/';
+		}
 		if (!$this->config->get('config_seo_url')) return $link;
 
 		$seo_url = '';
@@ -120,18 +202,50 @@ class ControllerCommonSeoPro extends Controller {
 		unset($data['route']);
 
 		switch ($route) {
+			case 'common/home':
+				if ($component['scheme'] == 'https') {
+					$link = $this->config->get('config_ssl');
+				} else {
+					$link = $this->config->get('config_url');
+				}
+				if($code != $this->config_language.'/') {
+					$link .= $code;
+				}
+				if(isset($this->cache_data['queries']['common/home'])) {
+					$link .= $this->cache_data['queries']['common/home'];
+				}
+				// Return clean shop link with any GET-parameters stripped off
+				return $link;
+				// (if you want to pass all parameters on homepage as is, comment the line above: `// return $link;`)
+				break;
 			case 'product/product':
 				if (isset($data['product_id'])) {
+					// Whitelist GET parameters
 					$tmp = $data;
 					$data = array();
 					if ($this->config->get('config_seo_url_include_path')) {
 						$data['path'] = $this->getPathByProduct($tmp['product_id']);
 						if (!$data['path']) return $link;
 					}
-					$data['product_id'] = $tmp['product_id'];
-					if (isset($tmp['tracking'])) {
-						$data['tracking'] = $tmp['tracking'];
+
+					$allowed_parameters = array(
+						'product_id', 'tracking',
+						// Compatibility with "OCJ Merchandising Reports" module.
+						// Save and pass-thru module specific GET parameters.
+						'uri', 'list_type',
+						// Compatibility with Google Analytics
+						'gclid', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
+						'type', 'source', 'block', 'position', 'keyword',
+						// Compatibility with Yandex Metrics, Yandex Market
+						'yclid', 'ymclid', 'openstat', 'frommarket',
+						'openstat_service', 'openstat_campaign', 'openstat_ad', 'openstat_source'
+						);
+					foreach($allowed_parameters as $ap) {
+						if (isset($tmp[$ap])) {
+							$data[$ap] = $tmp[$ap];
+						}
 					}
+
 				}
 				break;
 
@@ -144,7 +258,9 @@ class ControllerCommonSeoPro extends Controller {
 				}
 				break;
 
+			// pages retreived by AJAX requests
 			case 'product/product/review':
+			case 'information/information/info':
 			case 'information/information/agree':
 				return $link;
 				break;
@@ -159,37 +275,94 @@ class ControllerCommonSeoPro extends Controller {
 			$link = $this->config->get('config_url');
 		}
 
-		$link .= 'index.php?route=' . $route;
+		$link .= $code . 'index.php?route=' . $route;
 
 		if (count($data)) {
 			$link .= '&amp;' . urldecode(http_build_query($data, '', '&amp;'));
 		}
 
 		$queries = array();
-		if(!in_array($route, array('product/search'))) {
-			foreach($data as $key => $value) {
-				switch($key) {
-					case 'product_id':
-					case 'manufacturer_id':
-					case 'category_id':
-					case 'information_id':
-					case 'order_id':
-						$queries[] = $key . '=' . $value;
-						unset($data[$key]);
-						$postfix = 1;
-						break;
+		$is_news = false;
+		$is_posts = false;
+		$is_feedback = false;
+		foreach ($data as $key => $value) {
+			switch ($key) {
+				// Compatibility with NewsPostSystem by Samdev:
+				case 'posts_id':
+					$queries[] = $key . '=' . $value;
+					unset($data[$key]);
+					$postfix = 1;
+					$is_posts = true;
+					break;
+				case 'news_id':
+					$queries[] = $key . '=' . $value;
+					unset($data[$key]);
+					$postfix = 1;
+					$is_news = true;
+					break;
+				case 'feedback_id':
+					$queries[] = $key . '=' . $value;
+					unset($data[$key]);
+					$postfix = 1;
+					$is_feedback = true;
+					break;
 
-					case 'path':
-						$categories = explode('_', $value);
-						foreach($categories as $category) {
-							$queries[] = 'category_id=' . $category;
-						}
-						unset($data[$key]);
-						break;
+				case 'product_id':
+					$is_news = false;
+					$is_posts = false;
+					$is_feedback = false;
+				case 'manufacturer_id':
+					$is_news = false;
+					$is_posts = false;
+					$is_feedback = false;
+				case 'category_id':
+					$is_news = false;
+					$is_posts = false;
+					$is_feedback = false;
+				case 'information_id':
+					$is_news = false;
+					$is_posts = false;
+					$is_feedback = false;
+				case 'order_id':
+					$is_news = false;
+					$is_posts = false;
+					$is_feedback = false;
+				case 'search':
+					$is_news = false;
+					$is_posts = false;
+					$is_feedback = false;
+				case 'sub_category':
+					$is_news = false;
+					$is_posts = false;
+					$is_feedback = false;
+				case 'description':
+					$is_news = false;
+					$is_posts = false;
+					$is_feedback = false;
+				case 'page':
+					$queries[] = $key . '=' . $value;
+					unset($data[$key]);
+					$postfix = 1;
+					break;
 
-					default:
-						break;
-				}
+				case 'path':
+					// ATTN: user can set any path: path=2_4_1_2_3
+					$category_path = explode('_', $value);
+
+					// find real category path:
+					$category_id = end($category_path);
+					$categories = $this->getPathByCategory($category_id);
+
+					// save all categories queries to find later their aliases
+					$categories = explode('_', $categories);
+					foreach ($categories as $category) {
+						$queries[] = 'category_id=' . $category;
+					}
+					unset($data[$key]);
+					break;
+
+				default:
+					break;
 			}
 		}
 
@@ -210,13 +383,20 @@ class ControllerCommonSeoPro extends Controller {
 				$aliases[$row['query']] = $row['keyword'];
 			}
 			foreach($queries as $query) {
-				$seo_url .= '/' . rawurlencode($aliases[$query]);
+				
+				if ($is_posts==true) {
+					$seo_url .= '/posts/' . rawurlencode($aliases[$query]);
+				} elseif ($is_news==true) {
+					$seo_url .= '/news/' . rawurlencode($aliases[$query]);
+				} else {
+					$seo_url .= '/' . rawurlencode($aliases[$query]);
+				}
 			}
 		}
 
 		if ($seo_url == '') return $link;
 
-		$seo_url = trim($seo_url, '/');
+		$seo_url = $code . trim($seo_url, '/');
 
 		if ($component['scheme'] == 'https') {
 			$seo_url = $this->config->get('config_ssl') . $seo_url;
@@ -234,6 +414,7 @@ class ControllerCommonSeoPro extends Controller {
 			$seo_url = substr($seo_url, 0, -1);
 		}
 
+
 		if (count($data)) {
 			$seo_url .= '?' . urldecode(http_build_query($data, '', '&amp;'));
 		}
@@ -246,9 +427,9 @@ class ControllerCommonSeoPro extends Controller {
 		if ($product_id < 1) return false;
 
 		static $path = null;
-		if (!isset($path)) {
+		if (!is_array($path)) {
 			$path = $this->cache->get('product.seopath');
-			if (!isset($path)) $path = array();
+			if (!is_array($path)) $path = array();
 		}
 
 		if (!isset($path[$product_id])) {
@@ -267,9 +448,9 @@ class ControllerCommonSeoPro extends Controller {
 		if ($category_id < 1) return false;
 
 		static $path = null;
-		if (!isset($path)) {
+		if (!is_array($path)) {
 			$path = $this->cache->get('category.seopath');
-			if (!isset($path)) $path = array();
+			if (!is_array($path)) $path = array();
 		}
 
 		if (!isset($path[$category_id])) {
@@ -296,10 +477,12 @@ class ControllerCommonSeoPro extends Controller {
 	}
 
 	private function validate() {
-		if (isset($this->request->get['route']) && $this->request->get['route'] == 'error/not_found') {
+		if (isset($this->request->get['route']) && ($this->request->get['route'] == 'error/not_found'
+			|| preg_match('~^api/~',$this->request->get['route']) // Masks all api requests
+				)) {
 			return;
 		}
-		if (ltrim($this->request->server['REQUEST_URI'], '/') =='sitemap.xml') {
+		if (ltrim($this->request->server['REQUEST_URI'], '/') == 'sitemap.xml') {
 			$this->request->get['route'] = 'feed/google_sitemap';
 			return;
 		}
@@ -308,38 +491,26 @@ class ControllerCommonSeoPro extends Controller {
 			$this->request->get['route'] = 'common/home';
 		}
 
+
 		if (isset($this->request->server['HTTP_X_REQUESTED_WITH']) && strtolower($this->request->server['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
 			return;
 		}
 
 		if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
-			$config_ssl = substr($this->config->get('config_ssl'), 0, $this->strpos_offset('/', $this->config->get('config_ssl'), 3) + 1);
-			$url = str_replace('&amp;', '&', $config_ssl . ltrim($this->request->server['REQUEST_URI'], '/'));
-			$seo = str_replace('&amp;', '&', $this->url->link($this->request->get['route'], $this->getQueryString(array('route')), true));
+			$url = str_replace('&amp;', '&', $this->config->get('config_ssl') . ltrim($this->request->server['REQUEST_URI'], '/'));
+			$seo = str_replace('&amp;', '&', $this->url->link($this->request->get['route'], $this->getQueryString(array('route')), 'SSL'));
 		} else {
-			$config_url = substr($this->config->get('config_url'), 0, $this->strpos_offset('/', $this->config->get('config_url'), 3) + 1);
-			$url = str_replace('&amp;', '&', $config_url . ltrim($this->request->server['REQUEST_URI'], '/'));
-			$seo = str_replace('&amp;', '&', $this->url->link($this->request->get['route'], $this->getQueryString(array('route')), false));
+			$url = str_replace('&amp;', '&',
+				substr($this->config->get('config_url'), 0, strpos($this->config->get('config_url'), '/', 10)) // leave only domain
+				. $this->request->server['REQUEST_URI']);
+			$seo = str_replace('&amp;', '&', $this->url->link($this->request->get['route'], $this->getQueryString(array('route')), 'NONSSL'));
 		}
 
 		if (rawurldecode($url) != rawurldecode($seo)) {
+			// header($this->request->server['SERVER_PROTOCOL'] . ' 303 See Other');
+			// $this->response->redirect($seo,303);
 			header($this->request->server['SERVER_PROTOCOL'] . ' 301 Moved Permanently');
-
-			$this->response->redirect($seo);
-		}
-	}
-
-	private function strpos_offset($needle, $haystack, $occurrence) {
-		// explode the haystack
-		$arr = explode($needle, $haystack);
-		// check the needle is not out of bounds
-		switch($occurrence) {
-			case $occurrence == 0:
-				return false;
-			case $occurrence > max(array_keys($arr)):
-				return false;
-			default:
-				return strlen(implode($needle, array_slice($arr, 0, $occurrence)));
+			$this->response->redirect($seo,301);
 		}
 	}
 
@@ -348,7 +519,10 @@ class ControllerCommonSeoPro extends Controller {
 			$exclude = array();
 			}
 
-		return urldecode(http_build_query(array_diff_key($this->request->get, array_flip($exclude))));
+		return urldecode(
+			http_build_query(
+				array_diff_key($this->request->get, array_flip($exclude))
+				)
+			);
 		}
 	}
-?>

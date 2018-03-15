@@ -304,6 +304,12 @@ class ControllerCatalogCategory extends Controller {
 	}
 
 	protected function getForm() {
+    //CKEditor
+    if ($this->config->get('config_editor_default')) {
+        $this->document->addScript('view/javascript/ckeditor/ckeditor.js');
+        $this->document->addScript('view/javascript/ckeditor/ckeditor_init.js');
+    }
+
 		$data['heading_title'] = $this->language->get('heading_title');
 
 		$data['text_form'] = !isset($this->request->get['category_id']) ? $this->language->get('text_add') : $this->language->get('text_edit');
@@ -421,14 +427,6 @@ class ControllerCatalogCategory extends Controller {
 
 		if (isset($category_info)) {
 			unset($data['categories'][$category_info['category_id']]);
-		}
-
-		if (isset($this->request->post['path'])) {
-			$data['path'] = $this->request->post['path'];
-		} elseif (!empty($category_info)) {
-			$data['path'] = $category_info['path'];
-		} else {
-			$data['path'] = '';
 		}
 
 		if (isset($this->request->post['parent_id'])) {
@@ -654,7 +652,7 @@ class ControllerCatalogCategory extends Controller {
 			$action = array();
 
 			$action[] = array(
-				'text' => $this->language->get('text_edit'), //что за нах!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				'text' => $this->language->get('text_edit'),
 				'href' => $href_action . $result['category_id']
 			);
 
@@ -683,7 +681,8 @@ class ControllerCatalogCategory extends Controller {
 
 		if (array_key_exists($parent_id, $categories)) {
 			if ($parent_name != '') {
-				$parent_name .= $this->language->get('text_separator');
+				//$parent_name .= $this->language->get('text_separator');
+				$parent_name .= ' &gt; ';
 			}
 
 			foreach ($categories[$parent_id] as $category) {
@@ -696,8 +695,14 @@ class ControllerCatalogCategory extends Controller {
 			}
 		}
 
+    uasort($output, array($this, 'sortByName'));
+    
 		return $output;
 	}
+
+  function sortByName($a, $b) {
+    return strcmp($a['name'], $b['name']);
+  }
 
 	public function autocomplete() {
 		$json = array();

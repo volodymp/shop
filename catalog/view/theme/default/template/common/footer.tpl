@@ -39,7 +39,7 @@
       </div>
     </div>
     <hr>
-    <p><?php echo $powered; ?></p>
+    <p>Уют хаус © 2018</p>
   </div>
 </footer>
 

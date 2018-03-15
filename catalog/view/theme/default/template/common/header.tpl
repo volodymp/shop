@@ -26,12 +26,14 @@
 <meta property="og:image" content="<?php echo $logo; ?>" />
 <?php } ?>
 <meta property="og:site_name" content="<?php echo $name; ?>" />
+
 <script src="catalog/view/javascript/jquery/jquery-2.1.1.min.js" type="text/javascript"></script>
 <link href="catalog/view/javascript/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen" />
 <script src="catalog/view/javascript/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 <link href="catalog/view/javascript/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
 <link href="//fonts.googleapis.com/css?family=Open+Sans:400,400i,300,700" rel="stylesheet" type="text/css" />
 <link href="catalog/view/theme/default/stylesheet/stylesheet.css" rel="stylesheet">
+<script language="JavaScript" src="catalog/view/javascript/float_header.js" type="text/javascript"></script>
 <?php foreach ($styles as $style) { ?>
 <link href="<?php echo $style['href']; ?>" type="text/css" rel="<?php echo $style['rel']; ?>" media="<?php echo $style['media']; ?>" />
 <?php } ?>
@@ -47,6 +49,9 @@
 <?php } ?>
 </head>
 <body class="<?php echo $class; ?>">
+
+
+<div id="addbottom" class="default">
 <nav id="top">
   <div class="container">
     <?php echo $currency; ?>
@@ -82,7 +87,7 @@
         <div id="logo">
           <?php if ($logo) { ?>
             <?php if ($home == $og_url) { ?>
-              <img src="<?php echo $logo; ?>" title="<?php echo $name; ?>" alt="<?php echo $name; ?> class="img-responsive" />
+              <img src="<?php echo $logo; ?>" title="<?php echo $name; ?>" alt="<?php echo $name; ?>" class="img-responsive" />
             <?php } else { ?>
               <a href="<?php echo $home; ?>"><img src="<?php echo $logo; ?>" title="<?php echo $name; ?>" alt="<?php echo $name; ?>" class="img-responsive" /></a>
             <?php } ?>
@@ -97,12 +102,16 @@
     </div>
   </div>
 </header>
+</div>
+
 <?php if ($categories) { ?>
+<div id="top_nav" class="default">
 <div class="container">
   <nav id="menu" class="navbar">
     <div class="navbar-header"><span id="category" class="visible-xs"><?php echo $text_category; ?></span>
       <button type="button" class="btn btn-navbar navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse"><i class="fa fa-bars"></i></button>
     </div>
+	
     <div class="collapse navbar-collapse navbar-ex1-collapse">
       <ul class="nav navbar-nav">
         <?php foreach ($categories as $category) { ?>
@@ -124,8 +133,14 @@
         <li><a href="<?php echo $category['href']; ?>"><?php echo $category['name']; ?></a></li>
         <?php } ?>
         <?php } ?>
+		 <!-- добавил кнопку новости -->
+          <li>
+           <a href="http://mytest.ua/ru/news/">Новости</a>
+         </li>
+		 
       </ul>
     </div>
   </nav>
 </div>
 <?php } ?>
+</div>

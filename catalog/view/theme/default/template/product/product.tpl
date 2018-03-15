@@ -302,7 +302,15 @@
             <?php } ?>
             <div class="form-group">
               <label class="control-label" for="input-quantity"><?php echo $entry_qty; ?></label>
-              <input type="text" name="quantity" value="<?php echo $minimum; ?>" size="2" id="input-quantity" class="form-control" />
+              <div class="input-group number-spinner">
+			      <span class="input-group-btn">
+					<button class="btn btn-primary" data-dir="dwn"><i class="fa fa-minus"></i></button>
+			      </span>
+				<input type="text" name="quantity" value="<?php echo $minimum; ?>" id="input-quantity" class="form-control text-center" />
+				  <span class="input-group-btn">
+					<button class="btn btn-primary" data-dir="up"><i class="fa fa-plus"></i></button>
+				  </span>
+			    </div>
               <input type="hidden" name="product_id" value="<?php echo $product_id; ?>" />
               <br />
               <button type="button" id="button-cart" data-loading-text="<?php echo $text_loading; ?>" class="btn btn-primary btn-lg btn-block"><?php echo $button_cart; ?></button>
@@ -324,8 +332,8 @@
               <a href="" onclick="$('a[href=\'#tab-review\']').trigger('click'); return false;"><?php echo $reviews; ?></a> / <a href="" onclick="$('a[href=\'#tab-review\']').trigger('click'); return false;"><?php echo $text_write; ?></a></p>
             <hr>
             <!-- AddThis Button BEGIN -->
-            <div class="addthis_toolbox addthis_default_style"><a class="addthis_button_facebook_like" fb:like:layout="button_count"></a> <a class="addthis_button_tweet"></a> <a class="addthis_button_pinterest_pinit"></a> <a class="addthis_counter addthis_pill_style"></a></div>
-            <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-515eeaf54693130e"></script>
+<!--             <div class="addthis_toolbox addthis_default_style"><a class="addthis_button_facebook_like" fb:like:layout="button_count"></a> <a class="addthis_button_tweet"></a> <a class="addthis_button_pinterest_pinit"></a> <a class="addthis_counter addthis_pill_style"></a></div>
+            <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-515eeaf54693130e"></script> -->
             <!-- AddThis Button END -->
           </div>
           <?php } ?>
@@ -598,4 +606,44 @@ $(document).ready(function() {
 	});
 });
 //--></script>
+
+<script type="text/javascript" >
+$(document).ready(function() {
+$('.my_minus').click(function () {
+var $input = $(this).parent().find('.quant');
+var count = parseInt($input.val()) - 1;
+count = count < 1 ? 1 : count;
+$input.val(count);
+$input.change();
+return false;
+});
+$('.my_plus').click(function () {
+var $input = $(this).parent().find('.quant');
+$input.val(parseInt($input.val()) + 1);
+$input.change();
+return false;
+});
+});
+</script>
+
+<script type="text/javascript">
+$(document).on('click', '.number-spinner button', function () {    
+	var btn = $(this),
+		oldValue = btn.closest('.number-spinner').find('input').val().trim(),
+		newVal = 1;
+			
+	if (btn.attr('data-dir') == 'up') {
+		newVal = parseInt(oldValue) + 1;
+	} else {
+		if (oldValue > 1) {
+			newVal = parseInt(oldValue) - 1;
+		} else {
+			newVal = 1;
+		}
+	}
+	btn.closest('.number-spinner').find('input').val(newVal);
+});
+</script>
 <?php echo $footer; ?>
+
+

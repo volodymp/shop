@@ -1,0 +1,56 @@
+2018-02-26 15:22:01 - PHP Notice:  Undefined index: firstname in E:\inet_shop\OSPanel\domains\mytest.ua\catalog\model\account\address.php on line 22
+2018-02-26 15:22:01 - PHP Notice:  Undefined index: lastname in E:\inet_shop\OSPanel\domains\mytest.ua\catalog\model\account\address.php on line 22
+2018-02-26 15:22:01 - PHP Notice:  Undefined index: company in E:\inet_shop\OSPanel\domains\mytest.ua\catalog\model\account\address.php on line 22
+2018-02-26 15:22:01 - PHP Notice:  Undefined index: address_2 in E:\inet_shop\OSPanel\domains\mytest.ua\catalog\model\account\address.php on line 22
+2018-02-26 15:24:18 - PHP Notice:  Undefined index: firstname in E:\inet_shop\OSPanel\domains\mytest.ua\catalog\model\account\address.php on line 22
+2018-02-26 15:24:18 - PHP Notice:  Undefined index: lastname in E:\inet_shop\OSPanel\domains\mytest.ua\catalog\model\account\address.php on line 22
+2018-02-26 15:24:18 - PHP Notice:  Undefined index: company in E:\inet_shop\OSPanel\domains\mytest.ua\catalog\model\account\address.php on line 22
+2018-02-26 15:24:18 - PHP Notice:  Undefined index: address_2 in E:\inet_shop\OSPanel\domains\mytest.ua\catalog\model\account\address.php on line 22
+2018-03-01 16:52:11 - PHP Warning:  DOMDocument::loadXML(): CData section not finished
+ 
+		if (isset($this-&gt;request-&gt;get['filter_build_pr in Entity, line: 1418 in E:\inet_shop\OSPanel\domains\mytest.ua\admin\controller\extension\modification.php on line 504
+2018-03-01 16:52:11 - PHP Warning:  DOMDocument::loadXML(): Premature end of data in tag add line 1409 in Entity, line: 1418 in E:\inet_shop\OSPanel\domains\mytest.ua\admin\controller\extension\modification.php on line 504
+2018-03-01 16:52:11 - PHP Warning:  DOMDocument::loadXML(): Premature end of data in tag operation line 1405 in Entity, line: 1418 in E:\inet_shop\OSPanel\domains\mytest.ua\admin\controller\extension\modification.php on line 504
+2018-03-01 16:52:11 - PHP Warning:  DOMDocument::loadXML(): Premature end of data in tag file line 1359 in Entity, line: 1418 in E:\inet_shop\OSPanel\domains\mytest.ua\admin\controller\extension\modification.php on line 504
+2018-03-01 16:52:11 - PHP Warning:  DOMDocument::loadXML(): Premature end of data in tag modification line 2 in Entity, line: 1418 in E:\inet_shop\OSPanel\domains\mytest.ua\admin\controller\extension\modification.php on line 504
+2018-03-01 16:52:11 - PHP Notice:  Trying to get property of non-object in E:\inet_shop\OSPanel\domains\mytest.ua\admin\controller\extension\modification.php on line 512
+2018-03-01 16:52:59 - PHP Warning:  DOMDocument::loadXML(): CData section not finished
+ 
+		if (isset($this-&gt;request-&gt;get['filter_build_pr in Entity, line: 1418 in E:\inet_shop\OSPanel\domains\mytest.ua\admin\controller\extension\modification.php on line 504
+2018-03-01 16:52:59 - PHP Warning:  DOMDocument::loadXML(): Premature end of data in tag add line 1409 in Entity, line: 1418 in E:\inet_shop\OSPanel\domains\mytest.ua\admin\controller\extension\modification.php on line 504
+2018-03-01 16:52:59 - PHP Warning:  DOMDocument::loadXML(): Premature end of data in tag operation line 1405 in Entity, line: 1418 in E:\inet_shop\OSPanel\domains\mytest.ua\admin\controller\extension\modification.php on line 504
+2018-03-01 16:52:59 - PHP Warning:  DOMDocument::loadXML(): Premature end of data in tag file line 1359 in Entity, line: 1418 in E:\inet_shop\OSPanel\domains\mytest.ua\admin\controller\extension\modification.php on line 504
+2018-03-01 16:52:59 - PHP Warning:  DOMDocument::loadXML(): Premature end of data in tag modification line 2 in Entity, line: 1418 in E:\inet_shop\OSPanel\domains\mytest.ua\admin\controller\extension\modification.php on line 504
+2018-03-01 16:52:59 - PHP Notice:  Trying to get property of non-object in E:\inet_shop\OSPanel\domains\mytest.ua\admin\controller\extension\modification.php on line 512
+2018-03-01 16:53:03 - PHP Warning:  DOMDocument::loadXML(): CData section not finished
+ 
+		if (isset($this-&gt;request-&gt;get['filter_build_pr in Entity, line: 1418 in E:\inet_shop\OSPanel\domains\mytest.ua\admin\controller\extension\modification.php on line 504
+2018-03-01 16:53:03 - PHP Warning:  DOMDocument::loadXML(): Premature end of data in tag add line 1409 in Entity, line: 1418 in E:\inet_shop\OSPanel\domains\mytest.ua\admin\controller\extension\modification.php on line 504
+2018-03-01 16:53:03 - PHP Warning:  DOMDocument::loadXML(): Premature end of data in tag operation line 1405 in Entity, line: 1418 in E:\inet_shop\OSPanel\domains\mytest.ua\admin\controller\extension\modification.php on line 504
+2018-03-01 16:53:03 - PHP Warning:  DOMDocument::loadXML(): Premature end of data in tag file line 1359 in Entity, line: 1418 in E:\inet_shop\OSPanel\domains\mytest.ua\admin\controller\extension\modification.php on line 504
+2018-03-01 16:53:03 - PHP Warning:  DOMDocument::loadXML(): Premature end of data in tag modification line 2 in Entity, line: 1418 in E:\inet_shop\OSPanel\domains\mytest.ua\admin\controller\extension\modification.php on line 504
+2018-03-01 16:53:03 - PHP Notice:  Trying to get property of non-object in E:\inet_shop\OSPanel\domains\mytest.ua\admin\controller\extension\modification.php on line 512
+2018-03-02 20:09:30 - PHP Notice:  Error: Could not load template E:/inet_shop/OSPanel/domains/mytest.ua/catalog/view/theme/default/template/common/header.tpl! in E:\inet_shop\OSPanel\domains\mytest.ua\system\storage\modification\system\engine\loader.php on line 86
+2018-03-02 20:09:33 - PHP Notice:  Error: Could not load template E:/inet_shop/OSPanel/domains/mytest.ua/catalog/view/theme/default/template/common/header.tpl! in E:\inet_shop\OSPanel\domains\mytest.ua\system\storage\modification\system\engine\loader.php on line 86
+2018-03-02 20:44:38 - PHP Notice:  Error: Could not load template E:/inet_shop/OSPanel/domains/mytest.ua/catalog/view/theme/default/template/common/header.tpl! in E:\inet_shop\OSPanel\domains\mytest.ua\system\storage\modification\system\engine\loader.php on line 86
+2018-03-14 17:32:28 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:32:28 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:32:28 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:32:34 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:32:34 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:32:34 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:32:58 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:32:58 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:32:58 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:33:18 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:33:18 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:33:18 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:41:33 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:41:33 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:41:33 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:42:07 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:42:07 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:42:07 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:42:52 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:42:52 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
+2018-03-14 17:42:52 - PHP Notice:  Undefined variable: ocfilter_stock_status_type in E:\inet_shop\OSPanel\domains\mytest.ua\admin\view\template\module\ocfilter.tpl on line 205
